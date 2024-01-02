@@ -33,9 +33,11 @@ public class SubjectGroup {
     private String teacherId;
 
     @NotBlank
+    @Column(name = "start_lesson")
     private LocalTime start;
 
     @NotBlank
+    @Column(name = "end_lesson")
     private LocalTime end;
 
     @NotBlank
