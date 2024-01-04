@@ -8,5 +8,5 @@ public interface GroupService {
     long save(Group group);
     boolean deleteById(long id);
     boolean update(Group group);
-    Optional<Group> findById();
+    Optional<Group> findById(long id);
 }

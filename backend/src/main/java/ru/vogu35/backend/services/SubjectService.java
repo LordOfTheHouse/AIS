@@ -8,5 +8,5 @@ public interface SubjectService {
     long save(Subject subject);
     boolean update(Subject subject);
     boolean deleteById(long id);
-    Optional<Subject> findById();
+    Optional<Subject> findById(long id);
 }
