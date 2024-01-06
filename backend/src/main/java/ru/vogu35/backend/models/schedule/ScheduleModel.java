@@ -1,9 +1,15 @@
 package ru.vogu35.backend.models.schedule;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.vogu35.backend.entities.SubjectGroup;
 
 import java.time.LocalTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ScheduleModel {
     private String nameSubject;
     private LocalTime start;

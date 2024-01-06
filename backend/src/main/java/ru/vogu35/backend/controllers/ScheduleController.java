@@ -29,9 +29,11 @@ public class ScheduleController {
     @PreAuthorize("hasAnyRole('client_student', 'client_teacher')")
     @GetMapping
     public ResponseEntity<List<List<ScheduleModel>>> getSchedule(){
-        if(jwtService.getGroupIdClaim().equals("Teacher")){
+        if(jwtService.getGroupIdClaim().equalsIgnoreCase("teacher")){
+            log.info("Расписание для учителя");
             return ResponseEntity.ok(subjectGroup.findAllByTeacherId());
         }
+        log.info("Расписание для студента");
         return ResponseEntity.ok(subjectGroup.findAllByGroupId());
     }
 }

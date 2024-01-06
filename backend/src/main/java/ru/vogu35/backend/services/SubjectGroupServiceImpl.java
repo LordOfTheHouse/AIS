@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.Group;
 import ru.vogu35.backend.entities.Subject;
 import ru.vogu35.backend.entities.SubjectGroup;
+import ru.vogu35.backend.entities.Teacher;
 import ru.vogu35.backend.models.GroupModel;
 import ru.vogu35.backend.models.SubjectModel;
 import ru.vogu35.backend.models.schedule.ScheduleModel;
@@ -25,14 +26,19 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     private final JwtService jwtService;
     private final SubjectService subjectService;
     private final GroupService groupService;
+    private final TeacherService teacherService;
 
     @Autowired
-    public SubjectGroupServiceImpl(SubjectGroupRepository subjectGroupRepository, JwtService jwtService,
-                                   SubjectService subjectService, GroupService groupService) {
+    public SubjectGroupServiceImpl(
+            SubjectGroupRepository subjectGroupRepository, JwtService jwtService,
+            SubjectService subjectService, GroupService groupService,
+            TeacherService teacherService
+    ) {
         this.subjectGroupRepository = subjectGroupRepository;
         this.jwtService = jwtService;
         this.subjectService = subjectService;
         this.groupService = groupService;
+        this.teacherService = teacherService;
     }
 
     @Override
@@ -62,19 +68,31 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     public List<List<ScheduleModel>> findAllByGroupId() {
 
         return IntStream.rangeClosed(1, 6).mapToObj(weekday -> {
-            LocalDate currentDate = LocalDate.now();
+                    LocalDate currentDate = LocalDate.now();
 
-            // Получаем текущую неделю
-            WeekFields weekFields = WeekFields.of(Locale.getDefault());
-            int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
-            boolean isEvenWeek = currentWeek % 2 == 0;
+                    // Получаем текущую неделю
+                    WeekFields weekFields = WeekFields.of(Locale.getDefault());
+                    int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
+                    boolean isEvenWeek = currentWeek % 2 == 0;
 
-            List<SubjectGroup> subjectGroups = subjectGroupRepository
-                    .findAllByGroup_NameAndWeekdayAndWeekEven(jwtService.getGroupIdClaim(), weekday, isEvenWeek);
-            return subjectGroups.stream()
-                    .map(subjectGroup -> new ScheduleModel(subjectGroup, subjectGroup.getTeacherId()))
-                    .toList();
-        }
+                    List<SubjectGroup> subjectGroups = subjectGroupRepository
+                            .findAllByGroup_NameAndWeekdayAndWeekEven(jwtService.getGroupIdClaim(), weekday, isEvenWeek);
+
+                    return subjectGroups.stream()
+                            .map(subjectGroup -> {
+                                Optional<Teacher> teacherOptional = teacherService.findById(subjectGroup.getTeacherId());
+                                if (teacherOptional.isPresent()) {
+                                    Teacher teacher = teacherOptional.get();
+                                    String teacherName = teacher.getLastName() + " "
+                                            + teacher.getFirstName().charAt(0) + "."
+                                            + ((teacher.getMiddleName().isEmpty()) ? "" :
+                                            teacher.getMiddleName().charAt(0) + ".");
+                                    return new ScheduleModel(subjectGroup, teacherName);
+                                }
+                                return new ScheduleModel(subjectGroup, "Not Found");
+                            })
+                            .toList();
+                }
         ).toList();
     }
 
@@ -91,7 +109,14 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
                     List<SubjectGroup> subjectGroups = subjectGroupRepository
                             .findAllByTeacherIdAndWeekdayAndWeekEven(jwtService.getSubClaim(), weekday, isEvenWeek);
                     return subjectGroups.stream()
-                            .map(subjectGroup -> new ScheduleModel(subjectGroup, jwtService.getLastNameClaim()))
+                            .map(subjectGroup -> {
+                                String teacherName = jwtService.getLastNameClaim() + " "
+                                        + jwtService.getFirstNameClaim().charAt(0) + "."
+                                        + ((jwtService.getMiddleNameClaim().isEmpty()) ? "" :
+                                        jwtService.getMiddleNameClaim().charAt(0) + ".");
+                                    return new ScheduleModel(subjectGroup, teacherName);
+                                }
+                            )
                             .toList();
                 }
         ).toList();

@@ -41,8 +41,8 @@ public class SubjectGroup {
     private LocalTime end;
 
     @NotBlank
-    @Column(name = "is_week_even")
-    private boolean isWeekEven;
+    @Column(name = "week_even")
+    private boolean weekEven;
 
     @NotBlank
     private Integer weekday;

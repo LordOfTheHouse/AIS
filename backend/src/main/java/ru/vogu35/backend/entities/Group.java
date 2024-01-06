@@ -9,7 +9,8 @@ import ru.vogu35.backend.entities.enums.EFormEducation;
 import ru.vogu35.backend.entities.enums.EInstitute;
 
 
-@Table(name = "groups")
+@Table(name = "groups",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

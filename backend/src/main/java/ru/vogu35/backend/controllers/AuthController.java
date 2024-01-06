@@ -3,6 +3,7 @@ package ru.vogu35.backend.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,12 +14,15 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import ru.vogu35.backend.entities.Teacher;
 import ru.vogu35.backend.models.*;
 import org.springframework.http.*;
 import ru.vogu35.backend.services.JwtService;
+import ru.vogu35.backend.services.TeacherService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -30,10 +34,12 @@ public class AuthController {
     private final String keycloakTokenUrl = "http://localhost:8080/realms/ais-realm/protocol/openid-connect/token";
     private final String keycloakCreateUserUrl = "http://localhost:8080/admin/realms/ais-realm/users";
     private final JwtService jwtService;
+    private final TeacherService teacherService;
 
     @Autowired
-    public AuthController(JwtService jwtService) {
+    public AuthController(JwtService jwtService, TeacherService teacherService) {
         this.jwtService = jwtService;
+        this.teacherService = teacherService;
     }
 
     /**
@@ -81,8 +87,14 @@ public class AuthController {
         try {
             ResponseEntity<String> userResponseEntity = new RestTemplate().exchange(
                     keycloakCreateUserUrl, HttpMethod.POST, userEntity, String.class);
-            log.info("Результат отправки на keycloak: {}", userResponseEntity.getStatusCode());
-
+            log.info("Результат отправки на keycloak: {}", userResponseEntity.getHeaders().get("Location"));
+            if(signupRequest.getGroupName().equalsIgnoreCase("teacher")){
+                String location = Objects.requireNonNull(userResponseEntity.getHeaders().get("Location")).get(0);
+                String id = location.substring(location.lastIndexOf("/") + 1);
+                Teacher teacher = new Teacher(id, signupRequest.getFirstName(),
+                        signupRequest.getMiddleName(), signupRequest.getLastName());
+                teacherService.save(teacher);
+            }
             return new ResponseEntity<>(userResponseEntity.getStatusCode());
         } catch (Exception e) {
             e.printStackTrace();

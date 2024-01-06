@@ -3,12 +3,12 @@ POST localhost:8081/api/auth/signup
 Content-Type: application/json
 
 {
-  "username": "test",
+  "username": "test2",
   "firstName": "Миша",
   "middleName": "Александрович",
   "lastName": "Иванов",
-  "groupName": "РПС-41",
-  "email": "ke.s2013@yandex.ru",
+  "groupName": "Teacher",
+  "email": "ke.s20123@yandex.ru",
   "password": "password"
 }
 

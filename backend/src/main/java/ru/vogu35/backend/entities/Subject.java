@@ -7,7 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.vogu35.backend.entities.enums.ETypeSubject;
 
-@Table(name = "subjects")
+@Table(name = "subjects",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"title"}))
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
