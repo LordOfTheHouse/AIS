@@ -5,7 +5,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 /**
  * Возвращает данные пользователя из токена
  */
-public interface JwtService {
+public interface  JwtService {
     /**
      * Возврашает id пользователя по токену
      * @return id пользователя
@@ -35,6 +35,10 @@ public interface JwtService {
     String getDateBirthdayClaim();
 
     String getGroupIdClaim();
+
+    String getFirstNameClaim();
+    String getMiddleNameClaim();
+    String getLastNameClaim();
 
     /**
      * Возвращает токен пользователя

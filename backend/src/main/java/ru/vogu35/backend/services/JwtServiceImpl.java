@@ -42,7 +42,22 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String getGroupIdClaim() {
-        return getJwtSecurityContext().getClaim("group_id");
+        return getJwtSecurityContext().getClaim("group_name");
+    }
+
+    @Override
+    public String getFirstNameClaim() {
+        return getJwtSecurityContext().getClaim("given_name");
+    }
+
+    @Override
+    public String getMiddleNameClaim() {
+        return getJwtSecurityContext().getClaim("middle_name");
+    }
+
+    @Override
+    public String getLastNameClaim() {
+        return getJwtSecurityContext().getClaim("family_name");
     }
 
     @Override
