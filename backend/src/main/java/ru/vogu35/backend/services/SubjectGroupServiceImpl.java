@@ -10,12 +10,12 @@ import ru.vogu35.backend.models.GroupModel;
 import ru.vogu35.backend.models.SubjectModel;
 import ru.vogu35.backend.models.schedule.ScheduleModel;
 import ru.vogu35.backend.repositories.SubjectGroupRepository;
+import ru.vogu35.backend.services.auth.JwtService;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 

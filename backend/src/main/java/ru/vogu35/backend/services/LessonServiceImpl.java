@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.Lesson;
 import ru.vogu35.backend.repositories.LessonRepository;
+import ru.vogu35.backend.services.auth.JwtService;
 
 import java.util.List;
 

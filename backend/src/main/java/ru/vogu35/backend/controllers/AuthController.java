@@ -3,7 +3,6 @@ package ru.vogu35.backend.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import ru.vogu35.backend.entities.Teacher;
 import ru.vogu35.backend.models.*;
 import org.springframework.http.*;
-import ru.vogu35.backend.services.JwtService;
+import ru.vogu35.backend.proxies.KeycloakApiProxy;
+import ru.vogu35.backend.services.auth.JwtService;
 import ru.vogu35.backend.services.TeacherService;
 
 import java.util.ArrayList;
@@ -28,18 +28,12 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-
-    private final String clientId = "login-app";
-    private final String grantType = "password";
-    private final String keycloakTokenUrl = "http://localhost:8080/realms/ais-realm/protocol/openid-connect/token";
-    private final String keycloakCreateUserUrl = "http://localhost:8080/admin/realms/ais-realm/users";
     private final JwtService jwtService;
-    private final TeacherService teacherService;
+    private final KeycloakApiProxy keycloakApiProxy;
 
-    @Autowired
-    public AuthController(JwtService jwtService, TeacherService teacherService) {
+    public AuthController(JwtService jwtService, KeycloakApiProxy keycloakApiProxy) {
         this.jwtService = jwtService;
-        this.teacherService = teacherService;
+        this.keycloakApiProxy = keycloakApiProxy;
     }
 
     /**
@@ -50,26 +44,8 @@ public class AuthController {
      */
     @PostMapping("/signin")
     public ResponseEntity<String> signInUser(@RequestBody LoginRequest loginRequest) {
-        HttpHeaders tokenHeaders = new HttpHeaders();
-        tokenHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> tokenBody = new LinkedMultiValueMap<>();
-        tokenBody.add("grant_type", grantType);
-        tokenBody.add("client_id", clientId);
-        tokenBody.add("username", loginRequest.getUsername());
-        tokenBody.add("password", loginRequest.getPassword());
-
-        HttpEntity<MultiValueMap<String, String>> tokenEntity = new HttpEntity<>(tokenBody, tokenHeaders);
-
-        try {
-            ResponseEntity<String> tokenResponseEntity = new RestTemplate().exchange(
-                    keycloakTokenUrl, HttpMethod.POST, tokenEntity, String.class);
-
-            return ResponseEntity.ok(tokenResponseEntity.getBody());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        ResponseEntity<String> userEntity = keycloakApiProxy.signIn(loginRequest);
+        return new ResponseEntity<>(userEntity.getBody(), userEntity.getStatusCode());
     }
 
     /**
@@ -80,51 +56,10 @@ public class AuthController {
      */
     @PostMapping("/signup")
     public ResponseEntity<String> signUpUser(@RequestBody SignupRequest signupRequest) throws JsonProcessingException {
-        log.info("Выводим данные о клиенте {}", signupRequest);
-        HttpEntity<UserRequest> userEntity = getUserRequestHttpEntity(signupRequest);
-
-        log.info("Http entity: {}", userEntity);
-        try {
-            ResponseEntity<String> userResponseEntity = new RestTemplate().exchange(
-                    keycloakCreateUserUrl, HttpMethod.POST, userEntity, String.class);
-            log.info("Результат отправки на keycloak: {}", userResponseEntity.getHeaders().get("Location"));
-            if(signupRequest.getGroupName().equalsIgnoreCase("teacher")){
-                String location = Objects.requireNonNull(userResponseEntity.getHeaders().get("Location")).get(0);
-                String id = location.substring(location.lastIndexOf("/") + 1);
-                Teacher teacher = new Teacher(id, signupRequest.getFirstName(),
-                        signupRequest.getMiddleName(), signupRequest.getLastName());
-                teacherService.save(teacher);
-            }
-            return new ResponseEntity<>(userResponseEntity.getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(keycloakApiProxy.signUp(signupRequest)) {
+            return ResponseEntity.ok().build();
         }
-    }
-
-    private HttpEntity<UserRequest> getUserRequestHttpEntity(SignupRequest signupRequest) throws JsonProcessingException {
-        UserRequest userRequest = new UserRequest();
-        userRequest.setUsername(signupRequest.getUsername());
-        userRequest.setFirstName(signupRequest.getFirstName());
-        userRequest.setLastName(signupRequest.getLastName());
-        userRequest.setEmail(signupRequest.getEmail());
-        userRequest.setEnabled(true);
-
-        Attributes attributes = new Attributes();
-        attributes.setGroupName(signupRequest.getGroupName());
-        attributes.setMiddleName(signupRequest.getMiddleName());
-        userRequest.setAttributes(attributes);
-
-        Credential credential = new Credential();
-        credential.setType(grantType);
-        credential.setValue(signupRequest.getPassword());
-
-        List<Credential> credentials = new ArrayList<>();
-        credentials.add(credential);
-        userRequest.setCredentials(credentials);
-
-        HttpHeaders userHeaders = getHttpHeadersAdmin();
-        return new HttpEntity<>(userRequest, userHeaders);
+        return ResponseEntity.badRequest().build();
     }
 
     /**
@@ -144,13 +79,4 @@ public class AuthController {
         return ResponseEntity.ok(userResponse);
     }
 
-    private HttpHeaders getHttpHeadersAdmin() throws JsonProcessingException {
-        HttpHeaders userHeaders = new HttpHeaders();
-        userHeaders.setContentType(MediaType.APPLICATION_JSON);
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(signInUser(new LoginRequest("admin", "11111")).getBody());
-        String accessToken = rootNode.path("access_token").asText();
-        userHeaders.setBearerAuth(accessToken);
-        return userHeaders;
-    }
 }
