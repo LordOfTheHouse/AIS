@@ -2,7 +2,7 @@ package ru.vogu35.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.vogu35.backend.entities.Lesson;
+import ru.vogu35.backend.entities.StudentLesson;
 import ru.vogu35.backend.repositories.LessonRepository;
 import ru.vogu35.backend.services.auth.JwtService;
 
@@ -18,8 +18,8 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public long save(Lesson lesson) {
-        return lessonRepository.save(lesson).getId();
+    public long save(StudentLesson studentLesson) {
+        return lessonRepository.save(studentLesson).getId();
     }
 
     @Override
@@ -32,16 +32,16 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public boolean update(Lesson lesson) {
-        if(lessonRepository.existsById(lesson.getId())){
-            lessonRepository.save(lesson);
+    public boolean update(StudentLesson studentLesson) {
+        if(lessonRepository.existsById(studentLesson.getId())){
+            lessonRepository.save(studentLesson);
             return true;
         }
         return false;
     }
 
     @Override
-    public List<Lesson> findByStudentId(String id) {
+    public List<StudentLesson> findByStudentId(String id) {
         if(lessonRepository.existsByStudentId(id)){
             return lessonRepository.findAllByStudentId(id);
         }
