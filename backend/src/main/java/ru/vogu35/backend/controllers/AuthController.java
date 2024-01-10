@@ -1,28 +1,15 @@
 package ru.vogu35.backend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import ru.vogu35.backend.entities.Teacher;
-import ru.vogu35.backend.models.*;
-import org.springframework.http.*;
+import ru.vogu35.backend.models.LoginRequest;
+import ru.vogu35.backend.models.SignupRequest;
+import ru.vogu35.backend.models.UserResponse;
 import ru.vogu35.backend.proxies.KeycloakApiProxy;
 import ru.vogu35.backend.services.auth.JwtService;
-import ru.vogu35.backend.services.TeacherService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @RestController

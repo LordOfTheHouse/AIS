@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class Attributes {
-    private String groupName;
-    private String middleName;
+public class AttributesUserInfo {
+    private List<String> groupName;
+    private List<String> middleName;
 }

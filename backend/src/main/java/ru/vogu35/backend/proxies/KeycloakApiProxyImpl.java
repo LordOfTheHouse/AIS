@@ -11,7 +11,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import ru.vogu35.backend.entities.AdminToken;
-import ru.vogu35.backend.entities.Teacher;
 import ru.vogu35.backend.exseptions.LoginUserException;
 import ru.vogu35.backend.models.*;
 import ru.vogu35.backend.services.auth.AdminTokenService;
@@ -19,7 +18,6 @@ import ru.vogu35.backend.services.auth.AdminTokenService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -38,14 +36,23 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
     }
 
     @Override
-    public UserResponse findByUserId(String id) {
+    public Optional<UserResponse> findByUserId(String id) {
         HttpHeaders userHeaders = getHttpHeadersAdmin();
         HttpEntity<Void> userEntity = new HttpEntity<>(null, userHeaders);
-        ResponseEntity<String> userResponseEntity = new RestTemplate().exchange(
-                keycloakGetUserUrl + id,
-                HttpMethod.GET, userEntity, String.class);
-        log.info("user by id: {}", userResponseEntity.getBody());
-        return null;
+        try {
+            ResponseEntity<String> userResponseEntity = new RestTemplate().exchange(
+                    keycloakGetUserUrl + id,
+                    HttpMethod.GET, userEntity, String.class);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            UserInfo userInfo = objectMapper.readValue(userResponseEntity.getBody(), UserInfo.class);
+            log.info("user: {}", userInfo);
+            return Optional.of(new UserResponse(userInfo));
+        } catch (Exception ex) {
+            return Optional.empty();
+        }
+
+
     }
 
     @Override
@@ -74,14 +81,12 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
     @Override
     public boolean signUp(SignupRequest signupRequest) throws JsonProcessingException {
         log.info("Выводим данные о клиенте {}", signupRequest);
-
         HttpEntity<UserRequest> userEntity = getUserRequestHttpEntity(signupRequest);
-
-        log.info("Http entity: {}", userEntity);
         try {
             new RestTemplate().exchange(keycloakCreateUserUrl, HttpMethod.POST, userEntity, String.class);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

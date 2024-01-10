@@ -5,10 +5,11 @@ import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.Group;
 import ru.vogu35.backend.entities.Subject;
 import ru.vogu35.backend.entities.SubjectGroup;
-import ru.vogu35.backend.entities.Teacher;
 import ru.vogu35.backend.models.GroupModel;
 import ru.vogu35.backend.models.SubjectModel;
+import ru.vogu35.backend.models.UserResponse;
 import ru.vogu35.backend.models.schedule.ScheduleModel;
+import ru.vogu35.backend.proxies.KeycloakApiProxy;
 import ru.vogu35.backend.repositories.SubjectGroupRepository;
 import ru.vogu35.backend.services.auth.JwtService;
 
@@ -26,19 +27,19 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     private final JwtService jwtService;
     private final SubjectService subjectService;
     private final GroupService groupService;
-    private final TeacherService teacherService;
+    private final KeycloakApiProxy keycloakApiProxy;
 
     @Autowired
     public SubjectGroupServiceImpl(
             SubjectGroupRepository subjectGroupRepository, JwtService jwtService,
             SubjectService subjectService, GroupService groupService,
-            TeacherService teacherService
+            KeycloakApiProxy keycloakApiProxy
     ) {
         this.subjectGroupRepository = subjectGroupRepository;
         this.jwtService = jwtService;
         this.subjectService = subjectService;
         this.groupService = groupService;
-        this.teacherService = teacherService;
+        this.keycloakApiProxy = keycloakApiProxy;
     }
 
     @Override
@@ -70,7 +71,6 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
         return IntStream.rangeClosed(1, 6).mapToObj(weekday -> {
                     LocalDate currentDate = LocalDate.now();
 
-                    // Получаем текущую неделю
                     WeekFields weekFields = WeekFields.of(Locale.getDefault());
                     int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
                     boolean isEvenWeek = currentWeek % 2 == 0;
@@ -80,9 +80,11 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
 
                     return subjectGroups.stream()
                             .map(subjectGroup -> {
-                                Optional<Teacher> teacherOptional = teacherService.findById(subjectGroup.getTeacherId());
-                                if (teacherOptional.isPresent()) {
-                                    Teacher teacher = teacherOptional.get();
+                                Optional<UserResponse> userResponseOptional = keycloakApiProxy.findByUserId(
+                                        subjectGroup.getTeacherId()
+                                );
+                                if (userResponseOptional.isPresent()) {
+                                    UserResponse teacher = userResponseOptional.get();
                                     String teacherName = teacher.getLastName() + " "
                                             + teacher.getFirstName().charAt(0) + "."
                                             + ((teacher.getMiddleName().isEmpty()) ? "" :
