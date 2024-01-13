@@ -12,13 +12,17 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import ru.vogu35.backend.entities.AdminToken;
 import ru.vogu35.backend.exseptions.LoginUserException;
+import ru.vogu35.backend.exseptions.UserNotFoundException;
 import ru.vogu35.backend.models.*;
 import ru.vogu35.backend.services.auth.AdminTokenService;
 
+import java.io.DataInput;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Component
@@ -53,6 +57,40 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
         }
 
 
+    }
+
+    @Override
+    public List<UserResponse> findUserByGroup(String groupName) {
+        HttpHeaders userHeaders = getHttpHeadersAdmin();
+        HttpEntity<?> resetEntity = new HttpEntity<>(null, userHeaders);
+        log.info("Http entity: {}", resetEntity);
+        try {
+            ResponseEntity<String> userResponseEntity = new RestTemplate().exchange(
+                    keycloakCreateUserUrl + "?q=groupName:" + groupName,
+                    HttpMethod.GET, resetEntity, String.class);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode usersNode = objectMapper.readTree(userResponseEntity.getBody());
+            if (!usersNode.isArray() || usersNode.size() <= 0) {
+                throw new UserNotFoundException("В группе нет ни одного студента");
+            }
+
+            List<UserResponse> usersInfo = StreamSupport.stream(usersNode.spliterator(), false)
+                    .map(node -> {
+                        try {
+                            return new UserResponse(objectMapper.readValue(node.toString(), UserInfo.class));
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    })
+                    .collect(Collectors.toList());
+            log.info("users: {}", usersInfo);
+            return usersInfo;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return List.of();
     }
 
     @Override

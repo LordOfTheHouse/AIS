@@ -1,1 +1,5 @@
+###
 GET localhost:8081/test/user/fc1cb61d-5837-4c98-a964-03679af26e70
+
+###
+GET localhost:8081/lecture/РПС-41

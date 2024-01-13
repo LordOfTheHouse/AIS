@@ -20,7 +20,7 @@ public class ExceptionControllerAdvice {
                 .body(exception.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(LoginUserException.class)
     public ResponseEntity<String> exceptionLoginHandler(LoginUserException exception) {
         return ResponseEntity

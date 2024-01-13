@@ -41,6 +41,10 @@ public class SubjectGroup {
     private LocalTime end;
 
     @NotBlank
+    @Column(name = "classroom")
+    private String classroom;
+
+    @NotBlank
     @Column(name = "week_even")
     private boolean weekEven;
 

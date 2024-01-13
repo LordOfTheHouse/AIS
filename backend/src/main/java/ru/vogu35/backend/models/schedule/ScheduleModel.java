@@ -13,6 +13,7 @@ import java.time.LocalTime;
 public class ScheduleModel {
     private String nameSubject;
     private LocalTime start;
+    private String classroom;
     private String groupName;
     private String teacherName;
 
@@ -21,5 +22,6 @@ public class ScheduleModel {
         this.start = subjectGroup.getStart();
         this.groupName = subjectGroup.getGroup().getName();
         this.teacherName = teacherName;
+        this.classroom = subjectGroup.getClassroom();
     }
 }

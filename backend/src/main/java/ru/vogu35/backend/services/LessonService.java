@@ -1,12 +1,13 @@
 package ru.vogu35.backend.services;
 
-import ru.vogu35.backend.entities.StudentLesson;
+import ru.vogu35.backend.entities.Lesson;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface LessonService {
-    long save(StudentLesson studentLesson);
-    boolean deleteById(long id);
-    boolean update(StudentLesson studentLesson);
-    List<StudentLesson> findByStudentId(String id);
+    long save(Lesson lesson);
+    List<Lesson> findAllByToday(LocalDate date);
+    List<Lesson> findAllByDateEvent(LocalDate date);
+
 }

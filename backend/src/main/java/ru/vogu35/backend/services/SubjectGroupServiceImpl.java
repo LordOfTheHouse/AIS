@@ -65,16 +65,10 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
         return false;
     }
 
-    @Override
-    public List<List<ScheduleModel>> findAllByGroupId() {
+
+    public List<List<ScheduleModel>> findAllByGroupId(boolean isEvenWeek) {
 
         return IntStream.rangeClosed(1, 6).mapToObj(weekday -> {
-                    LocalDate currentDate = LocalDate.now();
-
-                    WeekFields weekFields = WeekFields.of(Locale.getDefault());
-                    int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
-                    boolean isEvenWeek = currentWeek % 2 == 0;
-
                     List<SubjectGroup> subjectGroups = subjectGroupRepository
                             .findAllByGroup_NameAndWeekdayAndWeekEven(jwtService.getGroupIdClaim(), weekday, isEvenWeek);
 
@@ -99,14 +93,14 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     }
 
     @Override
-    public List<List<ScheduleModel>> findAllByTeacherId() {
+    public List<List<ScheduleModel>> findAllByTeacherId(boolean isEvenWeek) {
         return IntStream.rangeClosed(1, 6).mapToObj(weekday -> {
-                    LocalDate currentDate = LocalDate.now();
-
-                    // Получаем текущую неделю
-                    WeekFields weekFields = WeekFields.of(Locale.getDefault());
-                    int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
-                    boolean isEvenWeek = currentWeek % 2 == 0;
+                    // LocalDate currentDate = LocalDate.now();
+                    //
+                    // // Получаем текущую неделю
+                    //WeekFields weekFields = WeekFields.of(Locale.getDefault());
+                    //int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
+                    //boolean isEvenWeek = currentWeek % 2 == 0;
 
                     List<SubjectGroup> subjectGroups = subjectGroupRepository
                             .findAllByTeacherIdAndWeekdayAndWeekEven(jwtService.getSubClaim(), weekday, isEvenWeek);
