@@ -7,6 +7,7 @@ import ru.vogu35.backend.repositories.StudentLessonRepository;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentLessonServiceImpl implements StudentLessonService {
@@ -46,5 +47,10 @@ public class StudentLessonServiceImpl implements StudentLessonService {
             return studentLessonRepository.findAllByStudentId(id);
         }
         return List.of();
+    }
+
+    @Override
+    public Optional<StudentLesson> findByStudentIdAndLessonId(String studentId, long lessonId) {
+        return studentLessonRepository.findByStudentIdAndLesson_Id(studentId, lessonId);
     }
 }

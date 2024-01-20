@@ -10,20 +10,20 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScheduleModel {
+public class ScheduleTodayModel {
     private String nameSubject;
     private LocalTime start;
-    private String classroom;
     private String groupName;
-    private String teacherName;
     private String typeSubject;
+    private String topic;
+    private long idLesson;
 
-    public ScheduleModel(SubjectGroup subjectGroup, String teacherName) {
+    public ScheduleTodayModel(SubjectGroup subjectGroup, String topic, long idLesson) {
         this.nameSubject = subjectGroup.getSubject().getTitle();
         this.start = subjectGroup.getStart();
         this.groupName = subjectGroup.getGroup().getName();
-        this.teacherName = teacherName;
-        this.classroom = subjectGroup.getClassroom();
         this.typeSubject = subjectGroup.getSubject().getTypeSubject().name();
+        this.topic = topic;
+        this.idLesson = idLesson;
     }
 }

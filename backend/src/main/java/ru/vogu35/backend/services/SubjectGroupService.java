@@ -4,7 +4,9 @@ import ru.vogu35.backend.entities.SubjectGroup;
 import ru.vogu35.backend.models.GroupModel;
 import ru.vogu35.backend.models.SubjectModel;
 import ru.vogu35.backend.models.schedule.ScheduleModel;
+import ru.vogu35.backend.models.schedule.ScheduleTodayModel;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -18,5 +20,7 @@ public interface SubjectGroupService {
     List<List<ScheduleModel>> findAllByGroupId(boolean isEvenWeek);
     List<List<ScheduleModel>> findAllByTeacherId(boolean isEvenWeek);
     List<GroupModel> findGroupByTeacherId();
+    List<SubjectGroup> findStartLecture(String groupName, LocalTime startLecture);
+    List<ScheduleTodayModel> findAllTodayByTeacher();
     List<SubjectModel> findSubjectByTeacherId();
 }
