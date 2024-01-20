@@ -9,6 +9,7 @@ import ru.vogu35.backend.models.schedule.ScheduleTodayModel;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Прорабатывает бизнес логику для работы с расписанием
@@ -20,7 +21,7 @@ public interface SubjectGroupService {
     List<List<ScheduleModel>> findAllByGroupId(boolean isEvenWeek);
     List<List<ScheduleModel>> findAllByTeacherId(boolean isEvenWeek);
     List<GroupModel> findGroupByTeacherId();
-    List<SubjectGroup> findStartLecture(String groupName, LocalTime startLecture);
+    Optional<SubjectGroup> findStartLecture(String groupName, LocalTime startLecture);
     List<ScheduleTodayModel> findAllTodayByTeacher();
     List<SubjectModel> findSubjectByTeacherId();
 }

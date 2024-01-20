@@ -28,6 +28,5 @@ public class Lesson {
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
-    @NotBlank
     private SubjectGroup subjectGroup;
 }

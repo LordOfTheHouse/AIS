@@ -1,5 +1,6 @@
 package ru.vogu35.backend.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.Group;
@@ -15,6 +16,7 @@ import ru.vogu35.backend.proxies.KeycloakApiProxy;
 import ru.vogu35.backend.repositories.SubjectGroupRepository;
 import ru.vogu35.backend.services.auth.JwtService;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.WeekFields;
@@ -23,6 +25,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Service
 public class SubjectGroupServiceImpl implements SubjectGroupService {
 
@@ -172,11 +175,15 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     }
 
     @Override
-    public List<SubjectGroup> findStartLecture(String groupName, LocalTime startLecture) {
+    public Optional<SubjectGroup> findStartLecture(String groupName, LocalTime startLecture) {
         LocalDate currentDate = LocalDate.now();
         int currentDay = currentDate.getDayOfWeek().getValue();
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
+        boolean isEvenWeek = currentWeek % 2 == 0;
         String idTeacher = jwtService.getSubClaim();
-        return subjectGroupRepository.findAllTeacherIdByGroup_NameAndWeekdayAndStart(idTeacher, groupName,
-                                                                                        currentDay, startLecture);
+        log.info("curDate: {}, id: {}, groupName: {}, start: {}", currentDay, idTeacher, groupName, startLecture);
+        return subjectGroupRepository.findAllByTeacherIdAndGroup_NameAndWeekdayAndWeekEvenAndStart(idTeacher, groupName,
+                currentDay, isEvenWeek, startLecture);
     }
 }

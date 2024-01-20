@@ -1,5 +1,6 @@
 package ru.vogu35.backend.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.StudentLesson;
@@ -9,6 +10,7 @@ import ru.vogu35.backend.repositories.StudentLessonRepository;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class StudentLessonServiceImpl implements StudentLessonService {
     private final StudentLessonRepository studentLessonRepository;
@@ -20,6 +22,7 @@ public class StudentLessonServiceImpl implements StudentLessonService {
 
     @Override
     public long save(StudentLesson studentLesson) {
+        log.info("save studentLesson {}", studentLesson);
         return studentLessonRepository.save(studentLesson).getId();
     }
 

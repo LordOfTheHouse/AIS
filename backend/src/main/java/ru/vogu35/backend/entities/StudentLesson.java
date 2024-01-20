@@ -19,7 +19,6 @@ public class StudentLesson {
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
-    @NotBlank
     private Lesson lesson;
 
     @NotBlank

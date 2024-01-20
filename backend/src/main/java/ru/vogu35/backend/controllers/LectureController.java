@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.vogu35.backend.entities.StudentLesson;
 import ru.vogu35.backend.entities.SubjectGroup;
+import ru.vogu35.backend.models.StartLecture;
 import ru.vogu35.backend.models.UserResponse;
 import ru.vogu35.backend.models.schedule.ScheduleTodayModel;
 import ru.vogu35.backend.proxies.KeycloakApiProxy;
@@ -52,13 +53,13 @@ public class LectureController {
 
     @PreAuthorize("hasRole('client_teacher')")
     @PostMapping("/{groupName}")
-    public ResponseEntity<?> startLecture(@PathVariable String groupName, LocalTime startTime, String topic){
-        log.info("Create LESSON");
-        List<SubjectGroup> subjectGroups = subjectGroupService.findStartLecture(groupName, startTime);
-        if(subjectGroups.isEmpty()) {
+    public ResponseEntity<?> startLecture(@PathVariable String groupName, @RequestBody StartLecture startLecture){
+        log.info("Create LESSON: {}", startLecture);
+        Optional<SubjectGroup> subjectGroups = subjectGroupService.findStartLecture(groupName, startLecture.getStartLecture());
+        if(subjectGroups.isEmpty()){
             return ResponseEntity.badRequest().body("Предмет или  группа не определена");
         }
-        if(lessonService.createLecture(subjectGroups.get(0), groupName, topic)){
+        if(lessonService.createLecture(subjectGroups.get(), groupName, startLecture.getTopic())){
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
@@ -98,7 +99,5 @@ public class LectureController {
         }
         return ResponseEntity.badRequest().build();
     }
-
-
 
 }
