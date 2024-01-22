@@ -15,8 +15,8 @@ import ru.vogu35.backend.services.LessonService;
 import ru.vogu35.backend.services.StudentLessonService;
 import ru.vogu35.backend.services.SubjectGroupService;
 
-import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -67,10 +67,9 @@ public class LectureController {
 
     @PreAuthorize("hasRole('client_teacher')")
     @PutMapping("/groups/{idStudent}/present")
-    public ResponseEntity<?> updatePresentStudent(@PathVariable @NotBlank String idStudent,
-                                          long idLesson){
+    public ResponseEntity<?> updatePresentStudent(@PathVariable @NotBlank String idStudent, @RequestBody Map<String, Long> lesson){
         log.info("update present");
-        Optional<StudentLesson> studentLesson = studentLessonService.findByStudentIdAndLessonId(idStudent, idLesson);
+        Optional<StudentLesson> studentLesson = studentLessonService.findByStudentIdAndLessonId(idStudent, lesson.get("idLesson"));
         if(studentLesson.isPresent()) {
             if(studentLesson.get().getIsPresent() != null) {
                 studentLesson.get().setIsPresent(!studentLesson.get().getIsPresent());
@@ -84,15 +83,16 @@ public class LectureController {
     @PreAuthorize("hasRole('client_teacher')")
     @PutMapping("/groups/{idStudent}/mark")
     public ResponseEntity<?> updateMarkStudent(@PathVariable @NotBlank String idStudent,
-                                          long idLesson, int  mark){
+                                               @RequestBody Map<String, Long> lesson){
         log.info("update present");
-        Optional<StudentLesson> studentLesson = studentLessonService.findByStudentIdAndLessonId(idStudent, idLesson);
+        Optional<StudentLesson> studentLesson = studentLessonService.findByStudentIdAndLessonId(idStudent, lesson.get("idLesson"));
         if(studentLesson.isPresent()) {
             if(studentLesson.get().getIsPresent() == null || !studentLesson.get().getIsPresent()) {
                 return ResponseEntity.badRequest().body("Студент отсутствует");
             }
-            if(mark >= 0 && mark <= 100){
-                studentLesson.get().setMark(mark);
+
+            if(lesson.get("mark") >= 0 && lesson.get("mark") <= 100){
+                studentLesson.get().setMark(lesson.get("mark").intValue());
                 studentLessonService.save(studentLesson.get());
                 return ResponseEntity.ok().build();
             }
