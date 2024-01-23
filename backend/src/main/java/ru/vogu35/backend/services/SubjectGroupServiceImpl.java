@@ -7,6 +7,7 @@ import ru.vogu35.backend.entities.Group;
 import ru.vogu35.backend.entities.Lesson;
 import ru.vogu35.backend.entities.Subject;
 import ru.vogu35.backend.entities.SubjectGroup;
+import ru.vogu35.backend.entities.enums.EInstitute;
 import ru.vogu35.backend.models.GroupModel;
 import ru.vogu35.backend.models.SubjectModel;
 import ru.vogu35.backend.models.UserResponse;
@@ -115,12 +116,12 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
                             .findAllByTeacherIdAndWeekdayAndWeekEven(jwtService.getSubClaim(), weekday, isEvenWeek);
                     return subjectGroups.stream()
                             .map(subjectGroup -> {
-                                String teacherName = jwtService.getLastNameClaim() + " "
-                                        + jwtService.getFirstNameClaim().charAt(0) + "."
-                                        + ((jwtService.getMiddleNameClaim().isEmpty()) ? "" :
-                                        jwtService.getMiddleNameClaim().charAt(0) + ".");
-                                    return new ScheduleModel(subjectGroup, teacherName);
-                                }
+                                        String teacherName = jwtService.getLastNameClaim() + " "
+                                                + jwtService.getFirstNameClaim().charAt(0) + "."
+                                                + ((jwtService.getMiddleNameClaim().isEmpty()) ? "" :
+                                                jwtService.getMiddleNameClaim().charAt(0) + ".");
+                                        return new ScheduleModel(subjectGroup, teacherName);
+                                    }
                             )
                             .toList();
                 }
@@ -141,10 +142,16 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     }
 
     @Override
+    public List<GroupModel> findGroupTeacherByInstitute(String institute) {
+        return subjectGroupRepository.findGroupTeacherByInstitute(jwtService.getSubClaim(),
+                EInstitute.valueOf(institute));
+    }
+
+    @Override
     public List<ScheduleTodayModel> findAllTodayByTeacher() {
         LocalDate currentDate = LocalDate.now();
 
-         // Получаем текущую неделю
+        // Получаем текущую неделю
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
         int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
         boolean isEvenWeek = currentWeek % 2 == 0;
@@ -152,12 +159,12 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
         List<SubjectGroup> subjectGroups = subjectGroupRepository
                 .findAllByTeacherIdAndWeekdayAndWeekEven(jwtService.getSubClaim(), currentDay, isEvenWeek);
         return subjectGroups.stream().map(subjectGroup -> {
-                                List<Lesson> lessons = lessonService.findAllByTodayAndSubjectGroupId(subjectGroup.getId());
-                                if(lessons.isEmpty()){
-                                    return new ScheduleTodayModel(subjectGroup, "", -1);
-                                }
-                                return new ScheduleTodayModel(subjectGroup, lessons.get(0).getTopic(), lessons.get(0).getId());
-                            }
+                    List<Lesson> lessons = lessonService.findAllByTodayAndSubjectGroupId(subjectGroup.getId());
+                    if (lessons.isEmpty()) {
+                        return new ScheduleTodayModel(subjectGroup, "", -1);
+                    }
+                    return new ScheduleTodayModel(subjectGroup, lessons.get(0).getTopic(), lessons.get(0).getId());
+                }
         ).toList();
     }
 
@@ -172,6 +179,11 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
                 )
                 .distinct()
                 .toList();
+    }
+
+    @Override
+    public List<SubjectModel> findSubjectTeacherByGroup(String groupName) {
+        return subjectGroupRepository.findGroupTeacherByGroup(jwtService.getSubClaim(),groupName);
     }
 
     @Override

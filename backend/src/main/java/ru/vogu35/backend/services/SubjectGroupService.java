@@ -21,7 +21,9 @@ public interface SubjectGroupService {
     List<List<ScheduleModel>> findAllByGroupId(boolean isEvenWeek);
     List<List<ScheduleModel>> findAllByTeacherId(boolean isEvenWeek);
     List<GroupModel> findGroupByTeacherId();
+    List<GroupModel> findGroupTeacherByInstitute(String institute);
     Optional<SubjectGroup> findStartLecture(String groupName, LocalTime startLecture);
     List<ScheduleTodayModel> findAllTodayByTeacher();
     List<SubjectModel> findSubjectByTeacherId();
+    List<SubjectModel> findSubjectTeacherByGroup(String groupName);
 }
