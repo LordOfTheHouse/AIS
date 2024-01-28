@@ -66,10 +66,11 @@ public class LectureController {
     }
 
     @PreAuthorize("hasRole('client_teacher')")
-    @PutMapping("/groups/{idStudent}/present")
-    public ResponseEntity<?> updatePresentStudent(@PathVariable @NotBlank String idStudent, @RequestBody Map<String, Long> lesson){
+    @PutMapping("/{idLesson}/groups/{idStudent}/present")
+    public ResponseEntity<?> updatePresentStudent(@PathVariable @NotBlank String idStudent,
+                                                  @PathVariable @NotBlank long idLesson){
         log.info("update present");
-        Optional<StudentLesson> studentLesson = studentLessonService.findByStudentIdAndLessonId(idStudent, lesson.get("idLesson"));
+        Optional<StudentLesson> studentLesson = studentLessonService.findByStudentIdAndLessonId(idStudent, idLesson);
         if(studentLesson.isPresent()) {
             if(studentLesson.get().getIsPresent() != null) {
                 studentLesson.get().setIsPresent(!studentLesson.get().getIsPresent());
@@ -81,18 +82,19 @@ public class LectureController {
     }
 
     @PreAuthorize("hasRole('client_teacher')")
-    @PutMapping("/groups/{idStudent}/mark")
+    @PutMapping("{idLesson}/groups/{idStudent}")
     public ResponseEntity<?> updateMarkStudent(@PathVariable @NotBlank String idStudent,
-                                               @RequestBody Map<String, Long> lesson){
-        log.info("update present");
-        Optional<StudentLesson> studentLesson = studentLessonService.findByStudentIdAndLessonId(idStudent, lesson.get("idLesson"));
+                                               @PathVariable @NotBlank long idLesson,
+                                               @RequestParam int mark){
+        log.info("update mark");
+        Optional<StudentLesson> studentLesson = studentLessonService.findByStudentIdAndLessonId(idStudent, idLesson);
         if(studentLesson.isPresent()) {
             if(studentLesson.get().getIsPresent() == null || !studentLesson.get().getIsPresent()) {
                 return ResponseEntity.badRequest().body("Студент отсутствует");
             }
 
-            if(lesson.get("mark") >= 0 && lesson.get("mark") <= 100){
-                studentLesson.get().setMark(lesson.get("mark").intValue());
+            if(mark >= 0 && mark <= 100){
+                studentLesson.get().setMark(mark);
                 studentLessonService.save(studentLesson.get());
                 return ResponseEntity.ok().build();
             }

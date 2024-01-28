@@ -21,14 +21,10 @@ import java.util.List;
 public class StudentPerformanceController {
 
     private final SubjectGroupService subjectGroupService;
-    private final KeycloakApiProxy keycloakApiProxy;
-    private final JwtService jwtService;
 
     @Autowired
-    public StudentPerformanceController(SubjectGroupService subjectGroupService, KeycloakApiProxy keycloakApiProxy, JwtService jwtService) {
+    public StudentPerformanceController(SubjectGroupService subjectGroupService) {
         this.subjectGroupService = subjectGroupService;
-        this.keycloakApiProxy = keycloakApiProxy;
-        this.jwtService = jwtService;
     }
 
     @PreAuthorize("hasRole('client_teacher')")
