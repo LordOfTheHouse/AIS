@@ -1,0 +1,69 @@
+package ru.vogu35.backend.controllers;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import ru.vogu35.backend.models.LoginRequest;
+import ru.vogu35.backend.models.SignupRequest;
+import ru.vogu35.backend.models.UserResponse;
+import ru.vogu35.backend.proxies.KeycloakApiProxy;
+import ru.vogu35.backend.services.auth.JwtService;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+    private final JwtService jwtService;
+    private final KeycloakApiProxy keycloakApiProxy;
+
+    public AuthController(JwtService jwtService, KeycloakApiProxy keycloakApiProxy) {
+        this.jwtService = jwtService;
+        this.keycloakApiProxy = keycloakApiProxy;
+    }
+
+    /**
+     * Авторизует пользователя
+     *
+     * @param loginRequest - данные для входа
+     * @return токен пользователя в случе успеха
+     */
+    @PostMapping("/signin")
+    public ResponseEntity<String> signInUser(@RequestBody LoginRequest loginRequest) {
+        ResponseEntity<String> userEntity = keycloakApiProxy.signIn(loginRequest);
+        return new ResponseEntity<>(userEntity.getBody(), userEntity.getStatusCode());
+    }
+
+    /**
+     * Регистрирует пользователя
+     *
+     * @param signupRequest - данные для регистрации
+     * @return статус операции
+     */
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUpUser(@RequestBody SignupRequest signupRequest) throws JsonProcessingException {
+        if(keycloakApiProxy.signUp(signupRequest)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    /**
+     * Возврашает данные пользователя
+     *
+     * @return данные
+     */
+    @PreAuthorize("hasAnyRole('client_student', 'client_teacher')")
+    @GetMapping
+    public ResponseEntity<?> getUserDetails() {
+        UserResponse userResponse = new UserResponse(
+                jwtService.getSubClaim(), jwtService.getPreferredUsernameClaim(),
+                jwtService.getEmailClaim(), jwtService.getFirstNameClaim(),
+                jwtService.getMiddleNameClaim(), jwtService.getLastNameClaim(),
+                jwtService.getGroupIdClaim()
+        );
+        return ResponseEntity.ok(userResponse);
+    }
+
+}

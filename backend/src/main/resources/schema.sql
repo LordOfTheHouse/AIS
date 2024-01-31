@@ -1,1 +1,1 @@
-create schema if not exists ais;
+create schema if not exists ais_service;
