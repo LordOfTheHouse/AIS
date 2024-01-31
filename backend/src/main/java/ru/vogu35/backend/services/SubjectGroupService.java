@@ -26,4 +26,5 @@ public interface SubjectGroupService {
     List<ScheduleTodayModel> findAllTodayByTeacher();
     List<SubjectModel> findSubjectByTeacherId();
     List<SubjectModel> findSubjectTeacherByGroup(String groupName);
+    List<SubjectGroup> findSubjectTeacherByGroupAndSubject(String groupName, String SubjectName);
 }

@@ -187,6 +187,12 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     }
 
     @Override
+    public List<SubjectGroup> findSubjectTeacherByGroupAndSubject(String groupName, String SubjectName) {
+        return subjectGroupRepository.findAllByTeacherIdAndGroup_NameAndAndSubject_Title(jwtService.getSubClaim(),
+                                                                                            groupName, SubjectName);
+    }
+
+    @Override
     public Optional<SubjectGroup> findStartLecture(String groupName, LocalTime startLecture) {
         LocalDate currentDate = LocalDate.now();
         int currentDay = currentDate.getDayOfWeek().getValue();

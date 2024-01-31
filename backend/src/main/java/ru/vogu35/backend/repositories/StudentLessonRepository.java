@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface StudentLessonRepository extends JpaRepository<StudentLesson, Long> {
     boolean existsByStudentId(String id);
     List<StudentLesson> findAllByStudentId(String id);
-
-    Optional<StudentLesson> findByStudentIdAndLesson_Id(@NotBlank String studentId, long lesson_id);
+    List<StudentLesson> findAllByLesson_Id(long id);
+    Optional<StudentLesson> findByStudentIdAndLesson_Id(@NotBlank String studentId, long lessonId);
 }

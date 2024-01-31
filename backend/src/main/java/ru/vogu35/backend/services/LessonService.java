@@ -11,5 +11,6 @@ public interface LessonService {
     boolean createLecture(SubjectGroup subjectGroup, String groupName, String topic);
     List<Lesson> findAllByTodayAndSubjectGroupId(long subjectGroupId);
     List<Lesson> findAllByDateEvent(LocalDate date, long subjectGroupId);
+    List<Lesson> findAllBySubjectGroupId(long subjectGroupId);
 
 }

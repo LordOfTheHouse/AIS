@@ -10,5 +10,6 @@ public interface StudentLessonService {
     boolean deleteById(long id);
     boolean update(StudentLesson studentLesson);
     List<StudentLesson> findByStudentId(String id);
+    List<StudentLesson> findByLessonId(long id);
     Optional<StudentLesson> findByStudentIdAndLessonId(String studentId, long lessonId);
 }

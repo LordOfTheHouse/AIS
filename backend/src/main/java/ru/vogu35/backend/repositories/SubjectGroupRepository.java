@@ -41,4 +41,7 @@ public interface SubjectGroupRepository extends JpaRepository<SubjectGroup, Long
                 .distinct()
                 .toList();
     }
+
+    List<SubjectGroup> findAllByTeacherIdAndGroup_NameAndAndSubject_Title(String teacherId, String groupName,
+                                                                            String subjectName);
 }

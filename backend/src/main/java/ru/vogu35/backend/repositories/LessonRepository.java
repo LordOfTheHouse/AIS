@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
     List<Lesson> findAllByDateEventAndSubjectGroup_Id(LocalDate localDate, long subject_id);
+    List<Lesson> findAllBySubjectGroup_Id(long subjectGroup);
 }

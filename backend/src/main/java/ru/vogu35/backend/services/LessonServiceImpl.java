@@ -68,4 +68,9 @@ public class LessonServiceImpl implements LessonService {
     public List<Lesson> findAllByDateEvent(LocalDate date, long subjectGroupId) {
         return lessonRepository.findAllByDateEventAndSubjectGroup_Id(date, subjectGroupId);
     }
+
+    @Override
+    public List<Lesson> findAllBySubjectGroupId(long subjectGroupId) {
+        return lessonRepository.findAllBySubjectGroup_Id(subjectGroupId);
+    }
 }

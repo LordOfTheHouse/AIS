@@ -53,6 +53,11 @@ public class StudentLessonServiceImpl implements StudentLessonService {
     }
 
     @Override
+    public List<StudentLesson> findByLessonId(long id) {
+        return studentLessonRepository.findAllByLesson_Id(id);
+    }
+
+    @Override
     public Optional<StudentLesson> findByStudentIdAndLessonId(String studentId, long lessonId) {
         return studentLessonRepository.findByStudentIdAndLesson_Id(studentId, lessonId);
     }
