@@ -78,7 +78,7 @@ public class StudentPerformanceController {
     }
 
     @PreAuthorize("hasRole('client_teacher')")
-    @GetMapping("/performance")
+    @GetMapping
     public ResponseEntity<List<LessonPerformanceModel>> getPerformanceStudent(@RequestBody PerformanceRequest performanceRequest) {
         List<SubjectGroup> subjectGroups = subjectGroupService.findSubjectTeacherByGroupAndSubject(performanceRequest.getGroupName(),
                 performanceRequest.getSubjectName());
