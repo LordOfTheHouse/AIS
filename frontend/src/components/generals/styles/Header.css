@@ -5,23 +5,31 @@
     background-color: #f0f0f0;
     align-items: center;
     padding: 10px;
+    top: 0;
+    z-index: 999;
+    position: sticky;
 }
 
-.header__cityLink {
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.header__phoneNumber {
-    margin-left: 150px;
+.header__menuOpen {
     position: fixed;
     top: 0;
     font-weight: bold;
 }
 
-.header__workTime {
-    margin-left: 500px;
+.header__logo {
+    margin-left: 20px;
     position: fixed;
     top: 0;
     font-weight: bold;
+}
+
+.header__title {
+    margin-left: 30px;
+    position: fixed;
+    top: 0;
+    font-weight: bold;
+}
+
+.ant-card-hoverable:hover {
+    background: rgba(66, 156, 255, 0.1);
 }
