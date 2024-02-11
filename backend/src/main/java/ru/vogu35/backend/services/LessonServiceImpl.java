@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.Lesson;
 import ru.vogu35.backend.entities.StudentLesson;
 import ru.vogu35.backend.entities.SubjectGroup;
-import ru.vogu35.backend.models.UserInfo;
-import ru.vogu35.backend.models.UserResponse;
+import ru.vogu35.backend.models.auth.UserResponse;
 import ru.vogu35.backend.proxies.KeycloakApiProxy;
 import ru.vogu35.backend.repositories.LessonRepository;
 

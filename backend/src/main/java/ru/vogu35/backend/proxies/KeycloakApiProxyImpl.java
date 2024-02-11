@@ -14,6 +14,7 @@ import ru.vogu35.backend.entities.AdminToken;
 import ru.vogu35.backend.exseptions.LoginUserException;
 import ru.vogu35.backend.exseptions.UserNotFoundException;
 import ru.vogu35.backend.models.*;
+import ru.vogu35.backend.models.auth.*;
 import ru.vogu35.backend.services.auth.AdminTokenService;
 
 import java.time.LocalDateTime;
@@ -113,6 +114,28 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
             throw new LoginUserException("Ошибка логина или пароля");
         }
         return responseEntity;
+    }
+
+    public Optional<String> refreshTokenUser(RefreshToken refreshToken) {
+        HttpHeaders tokenHeaders = new HttpHeaders();
+        tokenHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> tokenBody = new LinkedMultiValueMap<>();
+        tokenBody.add("grant_type", "refresh_token");
+        tokenBody.add("client_id", clientId);
+        tokenBody.add("refresh_token", refreshToken.getRefresh_token());
+
+        HttpEntity<MultiValueMap<String, String>> tokenEntity = new HttpEntity<>(tokenBody, tokenHeaders);
+
+        try {
+            ResponseEntity<String> tokenResponseEntity = new RestTemplate().exchange(
+                    keycloakTokenUrl, HttpMethod.POST, tokenEntity, String.class);
+            log.info("result refresh: {}", tokenResponseEntity.getStatusCode());
+            return Optional.ofNullable(tokenResponseEntity.getBody());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     @Override

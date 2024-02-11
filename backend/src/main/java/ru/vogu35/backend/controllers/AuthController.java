@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.vogu35.backend.models.LoginRequest;
-import ru.vogu35.backend.models.SignupRequest;
-import ru.vogu35.backend.models.UserResponse;
+import ru.vogu35.backend.models.auth.LoginRequest;
+import ru.vogu35.backend.models.auth.RefreshToken;
+import ru.vogu35.backend.models.auth.SignupRequest;
+import ru.vogu35.backend.models.auth.UserResponse;
 import ru.vogu35.backend.proxies.KeycloakApiProxy;
 import ru.vogu35.backend.services.auth.JwtService;
+
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -49,6 +52,15 @@ public class AuthController {
         return ResponseEntity.badRequest().build();
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshUser(@RequestBody RefreshToken refreshToken) {
+        log.info("refresh token");
+        Optional<String> newToken = keycloakApiProxy.refreshTokenUser(refreshToken);
+        return newToken
+                .map(token -> ResponseEntity.accepted().body(token))
+                .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
     /**
      * Возврашает данные пользователя
      *
@@ -57,12 +69,14 @@ public class AuthController {
     @PreAuthorize("hasAnyRole('client_student', 'client_teacher')")
     @GetMapping
     public ResponseEntity<?> getUserDetails() {
+        log.info("user: {}", jwtService.getGroupIdClaim());
         UserResponse userResponse = new UserResponse(
                 jwtService.getSubClaim(), jwtService.getPreferredUsernameClaim(),
                 jwtService.getEmailClaim(), jwtService.getFirstNameClaim(),
                 jwtService.getMiddleNameClaim(), jwtService.getLastNameClaim(),
                 jwtService.getGroupIdClaim()
         );
+
         return ResponseEntity.ok(userResponse);
     }
 

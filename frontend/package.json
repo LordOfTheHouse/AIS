@@ -46,7 +46,8 @@
     ]
   },
   "devDependencies": {
-    "antd": "^5.13.3"
+    "antd": "^5.13.3",
+    "axios": "^1.6.7"
   },
   "proxy": "http://localhost:8081"
 }

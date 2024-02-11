@@ -10,14 +10,13 @@ import ru.vogu35.backend.entities.SubjectGroup;
 import ru.vogu35.backend.entities.enums.EInstitute;
 import ru.vogu35.backend.models.GroupModel;
 import ru.vogu35.backend.models.SubjectModel;
-import ru.vogu35.backend.models.UserResponse;
+import ru.vogu35.backend.models.auth.UserResponse;
 import ru.vogu35.backend.models.schedule.ScheduleModel;
 import ru.vogu35.backend.models.schedule.ScheduleTodayModel;
 import ru.vogu35.backend.proxies.KeycloakApiProxy;
 import ru.vogu35.backend.repositories.SubjectGroupRepository;
 import ru.vogu35.backend.services.auth.JwtService;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.WeekFields;

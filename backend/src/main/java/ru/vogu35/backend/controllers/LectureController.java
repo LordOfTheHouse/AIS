@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.vogu35.backend.entities.StudentLesson;
 import ru.vogu35.backend.entities.SubjectGroup;
 import ru.vogu35.backend.models.StartLecture;
-import ru.vogu35.backend.models.UserResponse;
+import ru.vogu35.backend.models.auth.UserResponse;
 import ru.vogu35.backend.models.schedule.ScheduleTodayModel;
 import ru.vogu35.backend.proxies.KeycloakApiProxy;
 import ru.vogu35.backend.services.LessonService;
@@ -16,7 +16,6 @@ import ru.vogu35.backend.services.StudentLessonService;
 import ru.vogu35.backend.services.SubjectGroupService;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 

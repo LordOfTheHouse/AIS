@@ -1,4 +1,4 @@
-package ru.vogu35.backend.models;
+package ru.vogu35.backend.models.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
