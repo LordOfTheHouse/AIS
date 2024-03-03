@@ -18,6 +18,7 @@ public class UserResponse {
     private String middleName;
     private String lastName;
     private String groupName;
+    private String picture;
 
     public UserResponse(UserInfo userInfo) {
         id = userInfo.getId();

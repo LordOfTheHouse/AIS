@@ -63,6 +63,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
+    public String getPictureClaim() {
+        return getJwtSecurityContext().getClaim("picture");
+    }
+
+    @Override
     public Jwt getJwtSecurityContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

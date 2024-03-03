@@ -49,7 +49,7 @@ const AuthPage: FC = () => {
     const h2Style: CSSProperties = {
         fontSize: '36px',
         marginBottom: '20px',
-        width:"200px",
+        width: "200px",
         textAlign: 'center',
     };
 
@@ -59,44 +59,48 @@ const AuthPage: FC = () => {
         width: '100%',
     };
 
-    return (
-        <Row className="authPage">
-            <Card style={cardStyle}>
-                <div style={{display: 'flex'}}>
-                    <div>
-                        <h2 style={h2Style}>
-                            Вход
-                        </h2>
-                        <Form
-                            name="normal_login"
-                            form={form}
-                            layout="vertical"
-                            onFinish={onFinish}
-                        >
-                            <Form.Item
-                                name="username"
-                                rules={[{required: true, message: 'Пожалуйста, введите логин!'}]}
+    return (<div style={{width:"100%", height:"100vh"}}>
+            <Row className="authPage">
+                <Card style={cardStyle}>
+                    <div style={{display: 'flex'}}>
+                        <div>
+                            <h2 style={h2Style}>
+                                Вход
+                            </h2>
+                            <Form
+                                name="normal_login"
+                                form={form}
+                                layout="vertical"
+                                onFinish={onFinish}
                             >
-                                <Input style={{borderRadius:50}} prefix={<UserOutlined/>} placeholder="Логин"/>
-                            </Form.Item>
-                            <Form.Item
-                                name="password"
-                                rules={[{required: true, message: 'Пожалуйста, введите пароль!'}]}
-                            >
-                                <Input.Password style={{borderRadius:50}} prefix={<LockOutlined/>} placeholder="Пароль"/>
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType={"submit"} shape="round" size="large" style={buttonStyle}>
-                                    Войти
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                        <p style={{fontSize: '18px', textAlign: 'center'}}>Забыли пароль? <Link
-                            to="/forgot">Восстановите</Link></p>
+                                <Form.Item
+                                    name="username"
+                                    rules={[{required: true, message: 'Пожалуйста, введите логин!'}]}
+                                >
+                                    <Input style={{borderRadius: 50}} prefix={<UserOutlined/>} placeholder="Логин"/>
+                                </Form.Item>
+                                <Form.Item
+                                    name="password"
+                                    rules={[{required: true, message: 'Пожалуйста, введите пароль!'}]}
+                                >
+                                    <Input.Password style={{borderRadius: 50}} prefix={<LockOutlined/>}
+                                                    placeholder="Пароль"/>
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType={"submit"} shape="round" size="large"
+                                            style={buttonStyle}>
+                                        Войти
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                            <p style={{fontSize: '18px', textAlign: 'center'}}>Забыли пароль? <Link
+                                to="/forgot">Восстановите</Link></p>
+                        </div>
                     </div>
-                </div>
-            </Card>
-        </Row>
+                </Card>
+            </Row>
+        </div>
+
     );
 };
 

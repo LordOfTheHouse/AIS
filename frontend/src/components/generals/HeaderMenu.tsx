@@ -40,6 +40,11 @@ export const HeaderMenu: FC = () => {
             color: '#000',
             paddingLeft: 31,
             paddingRight: 31,
+            position: 'fixed',
+            top: 0,
+            width: isAuth?'85%':"100%",
+            left: "15%",
+            zIndex: 1,
         }}
     >
         <div>Аунтификация пользователя</div>
@@ -68,6 +73,7 @@ export const HeaderMenu: FC = () => {
                 <Link to="/auth">
                     <LoginCard />
                 </Link>
+
             )}
         </div>
     </Header>

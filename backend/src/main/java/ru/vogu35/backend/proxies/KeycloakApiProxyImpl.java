@@ -139,10 +139,10 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
     }
 
     @Override
-    public boolean signUp(SignupRequest signupRequest) throws JsonProcessingException {
+    public boolean signUp(SignupRequest signupRequest) {
         log.info("Выводим данные о клиенте {}", signupRequest);
-        HttpEntity<UserRequest> userEntity = getUserRequestHttpEntity(signupRequest);
         try {
+            HttpEntity<UserRequest> userEntity = getUserRequestHttpEntity(signupRequest);
             new RestTemplate().exchange(keycloakCreateUserUrl, HttpMethod.POST, userEntity, String.class);
             return true;
         } catch (Exception e) {

@@ -24,3 +24,12 @@ export interface IUser {
     lastName:string;
     email: string;
 }
+
+export interface ISchedule {
+    nameSubject:string;
+    start:string;
+    classroom:string;
+    groupName:string;
+    teacherName:string;
+    typeSubject:string;
+};

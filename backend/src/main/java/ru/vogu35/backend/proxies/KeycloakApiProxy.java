@@ -14,7 +14,7 @@ public interface KeycloakApiProxy {
     Optional<UserResponse> findByUserId(String id);
     List<UserResponse> findUserByGroup(String groupName);
     ResponseEntity<String> signIn(LoginRequest loginRequest);
-    boolean signUp(SignupRequest signupRequest) throws JsonProcessingException;
+    boolean signUp(SignupRequest signupRequest);
     Optional<String> refreshTokenUser(RefreshToken refreshToken);
 
 }

@@ -16,5 +16,6 @@ public class UserInfo {
     private String email;
     private String firstName;
     private String lastName;
+    private String picture;
     private AttributesUserInfo attributes;
 }

@@ -45,13 +45,18 @@ public class AuthController {
      * @return статус операции
      */
     @PostMapping("/signup")
-    public ResponseEntity<String> signUpUser(@RequestBody SignupRequest signupRequest) throws JsonProcessingException {
+    public ResponseEntity<String> signUpUser(@RequestBody SignupRequest signupRequest) {
         if(keycloakApiProxy.signUp(signupRequest)) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
     }
 
+    @PutMapping("/users/{id}")
+    public ResponseEntity<String> updateUserInfo(@PathVariable(name = "id") String idUser) {
+
+        return ResponseEntity.badRequest().build();
+    }
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshUser(@RequestBody RefreshToken refreshToken) {
         log.info("refresh token");
@@ -74,7 +79,7 @@ public class AuthController {
                 jwtService.getSubClaim(), jwtService.getPreferredUsernameClaim(),
                 jwtService.getEmailClaim(), jwtService.getFirstNameClaim(),
                 jwtService.getMiddleNameClaim(), jwtService.getLastNameClaim(),
-                jwtService.getGroupIdClaim()
+                jwtService.getGroupIdClaim(), jwtService.getPictureClaim()
         );
 
         return ResponseEntity.ok(userResponse);

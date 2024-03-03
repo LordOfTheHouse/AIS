@@ -14,12 +14,16 @@ function App() {
     const user = useSelector((state: RootState) => state.auth.user);
     const dispatch = useDispatch();
     useEffect(() => {
+            refreshToken();
+    }, []);
+
+    useEffect(() => {
         const refreshInterval = setInterval(() => {
             refreshToken();
         }, 60 * 14 * 1000);
-
         return () => clearInterval(refreshInterval);
     }, [user]);
+
     const refreshToken = () => {
         console.log("Check for refresh");
         const userStr = sessionStorage.getItem("user");
@@ -50,7 +54,7 @@ function App() {
                 {user ? <NavigationMenu/> : <Navigate to={"/auth"}/>}
                 <div style={{width: '100%'}}>
                     <HeaderMenu/>
-                    <Content>
+                    <Content style={{width:"100%", height:"100vh", background:"white"}}>
                         <AppRoutes/>
                     </Content>
                 </div>

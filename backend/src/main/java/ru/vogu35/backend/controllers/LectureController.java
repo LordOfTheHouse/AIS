@@ -38,12 +38,12 @@ public class LectureController {
         this.studentLessonService = studentLessonService;
     }
 
-    @PreAuthorize("hasRole('client_teacher')")
+    @PreAuthorize("hasAnyRole('client_student', 'client_teacher')")
     @GetMapping("/groups/today")
     public ResponseEntity<List<ScheduleTodayModel>> getGroups(){
         return ResponseEntity.ok(subjectGroupService.findAllTodayByTeacher());
     }
-    @PreAuthorize("hasRole('client_teacher')")
+    @PreAuthorize("hasAnyRole('client_student', 'client_teacher')")
     @GetMapping("/{group}")
     public ResponseEntity<List<UserResponse>> getStudentGroup(@PathVariable("group") String groupName){
         log.info("students group: {}", groupName);
