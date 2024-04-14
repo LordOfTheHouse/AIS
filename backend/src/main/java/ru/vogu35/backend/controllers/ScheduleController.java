@@ -14,6 +14,7 @@ import ru.vogu35.backend.services.SubjectGroupService;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,6 +46,6 @@ public class ScheduleController {
             return ResponseEntity.ok(subjectGroup.findAllByTeacherId(isEvenWeek));
         }
         log.info("Расписание для студента");
-        return ResponseEntity.ok(subjectGroup.findAllByGroupId(isEvenWeek));
+        return ResponseEntity.ok( subjectGroup.findAllByGroupId(isEvenWeek) );
     }
 }

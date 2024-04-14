@@ -39,6 +39,7 @@ public interface  JwtService {
     String getFirstNameClaim();
     String getMiddleNameClaim();
     String getLastNameClaim();
+    String getPictureClaim();
 
     /**
      * Возвращает токен пользователя

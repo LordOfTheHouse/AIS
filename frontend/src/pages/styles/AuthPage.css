@@ -1,0 +1,42 @@
+.authPage {
+    justify-content: center;
+    padding-top: 150px;
+}
+
+.authPage__card {
+    min-width: 300px;
+    width: 20%;
+    height: 10%;
+    border-width: 3px;
+}
+
+.authPage__card-content {
+    flex: 1;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.authPage__card-h1 {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.authPage__card-h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.authPage__card-p {
+    font-size: 18px;
+    text-align: center;
+}
+
+.authPage__button {
+    background-color: #0e4acb;
+    color: #FFFFFF;
+}

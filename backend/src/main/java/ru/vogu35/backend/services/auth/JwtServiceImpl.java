@@ -1,5 +1,6 @@
 package ru.vogu35.backend.services.auth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -12,6 +13,7 @@ import ru.vogu35.backend.exseptions.UserNotFoundException;
 /**
  * Реализует логику работы с токеном пользователя
  */
+@Slf4j
 @Service
 public class JwtServiceImpl implements JwtService {
     @Override
@@ -61,12 +63,18 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
+    public String getPictureClaim() {
+        return getJwtSecurityContext().getClaim("picture");
+    }
+
+    @Override
     public Jwt getJwtSecurityContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof JwtAuthenticationToken) {
             JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) authentication;
             Jwt jwt = jwtAuthenticationToken.getToken();
+            log.info("claims: {}", jwt.getClaims());
             return jwt;
         } else {
             throw new UserNotFoundException("Пользователь не найден");

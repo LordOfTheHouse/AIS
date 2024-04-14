@@ -1,0 +1,4 @@
+.navigationMenu {
+    position: fixed;
+    z-index: 998;
+}

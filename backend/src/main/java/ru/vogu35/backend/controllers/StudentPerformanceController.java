@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.vogu35.backend.entities.Lesson;
-import ru.vogu35.backend.entities.StudentLesson;
 import ru.vogu35.backend.entities.SubjectGroup;
 import ru.vogu35.backend.entities.enums.EInstitute;
 import ru.vogu35.backend.models.GroupModel;
@@ -15,11 +14,9 @@ import ru.vogu35.backend.models.performance.LessonPerformanceModel;
 import ru.vogu35.backend.models.performance.PerformanceRequest;
 import ru.vogu35.backend.models.SubjectModel;
 import ru.vogu35.backend.models.performance.StudentPerformanceModel;
-import ru.vogu35.backend.proxies.KeycloakApiProxy;
 import ru.vogu35.backend.services.LessonService;
 import ru.vogu35.backend.services.StudentLessonService;
 import ru.vogu35.backend.services.SubjectGroupService;
-import ru.vogu35.backend.services.auth.JwtService;
 
 import java.util.List;
 
