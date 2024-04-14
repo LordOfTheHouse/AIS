@@ -14,4 +14,5 @@ public class StartLecture {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startLecture;
     private String topic;
+    private String groupName;
 }

@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -16,27 +18,34 @@ import ru.vogu35.backend.exseptions.UserNotFoundException;
 import ru.vogu35.backend.models.*;
 import ru.vogu35.backend.models.auth.*;
 import ru.vogu35.backend.services.auth.AdminTokenService;
+import ru.vogu35.backend.services.auth.JwtService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Slf4j
-@Component
-public class KeycloakApiProxyImpl implements KeycloakApiProxy {
+@Service
+@Primary
+public class KeycloakAuthServiceImpl implements AuthService {
     private final String clientId = "login-app";
     private final String grantType = "password";
     private final String keycloakGetUserUrl = "http://localhost:8080/admin/realms/ais-realm/users/";
     private final String keycloakCreateUserUrl = "http://localhost:8080/admin/realms/ais-realm/users";
     private final String keycloakTokenUrl = "http://localhost:8080/realms/ais-realm/protocol/openid-connect/token";
     private final AdminTokenService adminTokenService;
+    private final JwtService jwtService;
+
+    private final ConcurrentHashMap<String, List<UserResponse>> usersGroup = new ConcurrentHashMap<>();
 
     @Autowired
-    public KeycloakApiProxyImpl(AdminTokenService adminTokenService) {
+    public KeycloakAuthServiceImpl(AdminTokenService adminTokenService, JwtService jwtService) {
         this.adminTokenService = adminTokenService;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -56,11 +65,14 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
             return Optional.empty();
         }
 
-
     }
 
     @Override
     public List<UserResponse> findUserByGroup(String groupName) {
+        if(usersGroup.get(groupName) != null){
+            return usersGroup.get(groupName);
+        }
+
         HttpHeaders userHeaders = getHttpHeadersAdmin();
         HttpEntity<?> resetEntity = new HttpEntity<>(null, userHeaders);
         log.info("Http entity: {}", resetEntity);
@@ -78,6 +90,7 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
             List<UserResponse> usersInfo = StreamSupport.stream(usersNode.spliterator(), false)
                     .map(node -> {
                         try {
+                            log.info("error middleName {}", node);
                             return new UserResponse(objectMapper.readValue(node.toString(), UserInfo.class));
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException(e);
@@ -86,6 +99,7 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
                     })
                     .collect(Collectors.toList());
             log.info("users: {}", usersInfo);
+            usersGroup.put(groupName, usersInfo);
             return usersInfo;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -136,6 +150,22 @@ public class KeycloakApiProxyImpl implements KeycloakApiProxy {
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<UserResponse> getUserDetail() {
+        UserResponse userResponse = new UserResponse
+                .UserResponseBuilder(jwtService.getSubClaim())
+                .username(jwtService.getPreferredUsernameClaim())
+                .email(jwtService.getEmailClaim())
+                .firstName(jwtService.getFirstNameClaim())
+                .middleName(jwtService.getMiddleNameClaim())
+                .lastName(jwtService.getLastNameClaim())
+                .groupName(jwtService.getGroupIdClaim())
+                .build();
+
+        log.info("{}", userResponse);
+        return Optional.of(userResponse);
     }
 
     @Override

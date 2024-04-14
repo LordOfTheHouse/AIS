@@ -20,8 +20,8 @@ const getSchedule = async (isEvenWeek: boolean, dispatch: Dispatch) => {
     return detailsResponse.data;
 };
 
-const authService = {
+const scheduleService = {
     getSchedule
 };
 
-export default authService;
+export default scheduleService;

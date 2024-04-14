@@ -33,7 +33,7 @@ const NavigationMenu: FC = () => {
                         <Link to="/schedule">Расписание</Link>
                     </Menu.Item>
                     <Menu.Item key="3" icon={<UserAddOutlined />}>
-                        <Link to="/lectures">Лекции</Link>
+                        <Link to="/lesson">Лекции</Link>
                     </Menu.Item>
                     <Menu.Item key="4" icon={<UserAddOutlined />}>
                         <Link to="/achievements">Успеваемость</Link>

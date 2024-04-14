@@ -39,7 +39,7 @@ function App() {
             const refresh_token = userS.refresh_token;
             authService.refresh(refresh_token, dispatch)
                 .then((userData) => {
-                    console.log("Refresh successful", userData);
+                    console.log(  "Refresh successful", userData);
                 })
                 .catch((error) => {
                     authService.logoutUser(dispatch);

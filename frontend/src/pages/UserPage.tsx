@@ -39,19 +39,20 @@ export const UserPage: React.FC = () => {
                         <Card title="Настройки" style={{width: 600, margin: 20}}>
                             <Form onFinish={onFinish} initialValues={user}>
                                 <Form.Item name="lastName" label="Фамилия">
-                                    <Input/>
+                                    <Input disabled style={{ width: '100%' }}/>
                                 </Form.Item>
                                 <Form.Item name="middleName" label="Отчество">
-                                    <Input/>
+                                    <Input disabled style={{ width: '100%' }}/>
                                 </Form.Item>
                                 <Form.Item name="firstName" label="Имя">
-                                    <Input/>
+
+                                    <Input disabled style={{ width: '100%' }}/>
                                 </Form.Item>
                                 <Form.Item name="groupName" label="Группа">
-                                    <Input/>
+                                    <Input disabled style={{ width: '100%' }}/>
                                 </Form.Item>
                                 <Form.Item name="email" label="Email">
-                                    <Input/>
+                                    <Input disabled style={{ width: '100%' }}/>
                                 </Form.Item>
                                 <Form.Item>
                                     <Button type="primary" htmlType="submit">

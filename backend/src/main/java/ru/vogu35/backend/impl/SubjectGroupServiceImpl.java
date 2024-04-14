@@ -1,4 +1,4 @@
-package ru.vogu35.backend.services;
+package ru.vogu35.backend.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,12 @@ import ru.vogu35.backend.models.SubjectModel;
 import ru.vogu35.backend.models.auth.UserResponse;
 import ru.vogu35.backend.models.schedule.ScheduleModel;
 import ru.vogu35.backend.models.schedule.ScheduleTodayModel;
-import ru.vogu35.backend.proxies.KeycloakApiProxy;
+import ru.vogu35.backend.proxies.AuthService;
 import ru.vogu35.backend.repositories.SubjectGroupRepository;
+import ru.vogu35.backend.services.GroupService;
+import ru.vogu35.backend.services.LessonService;
+import ru.vogu35.backend.services.SubjectGroupService;
+import ru.vogu35.backend.services.SubjectService;
 import ru.vogu35.backend.services.auth.JwtService;
 
 import java.time.LocalDate;
@@ -34,13 +38,13 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     private final SubjectService subjectService;
     private final GroupService groupService;
     private final LessonService lessonService;
-    private final KeycloakApiProxy keycloakApiProxy;
+    private final AuthService authService;
 
     @Autowired
     public SubjectGroupServiceImpl(
             SubjectGroupRepository subjectGroupRepository, JwtService jwtService,
             SubjectService subjectService, GroupService groupService,
-            KeycloakApiProxy keycloakApiProxy,
+            AuthService authService,
             LessonService lessonService
     ) {
         this.subjectGroupRepository = subjectGroupRepository;
@@ -48,7 +52,7 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
         this.subjectService = subjectService;
         this.groupService = groupService;
         this.lessonService = lessonService;
-        this.keycloakApiProxy = keycloakApiProxy;
+        this.authService = authService;
     }
 
     @Override
@@ -83,7 +87,7 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
 
                     return subjectGroups.stream()
                             .map(subjectGroup -> {
-                                Optional<UserResponse> userResponseOptional = keycloakApiProxy.findByUserId(
+                                Optional<UserResponse> userResponseOptional = authService.findByUserId(
                                         subjectGroup.getTeacherId()
                                 );
                                 if (userResponseOptional.isPresent()) {

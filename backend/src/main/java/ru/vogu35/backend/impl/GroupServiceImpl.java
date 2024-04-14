@@ -1,10 +1,10 @@
-package ru.vogu35.backend.services;
+package ru.vogu35.backend.impl;
 
-import org.hibernate.annotations.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.Group;
 import ru.vogu35.backend.repositories.GroupRepository;
+import ru.vogu35.backend.services.GroupService;
 
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public boolean deleteById(long id) {
-        if(groupRepository.existsById(id)){
+        if (groupRepository.existsById(id)) {
             groupRepository.deleteById(id);
             return true;
         }
@@ -34,7 +34,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public boolean update(Group group) {
-        if(groupRepository.existsById(group.getId())){
+        if (groupRepository.existsById(group.getId())) {
             groupRepository.save(group);
             return true;
         }

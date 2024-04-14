@@ -1,9 +1,10 @@
-package ru.vogu35.backend.services;
+package ru.vogu35.backend.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.Subject;
 import ru.vogu35.backend.repositories.SubjectRepository;
+import ru.vogu35.backend.services.SubjectService;
 
 import java.util.Optional;
 

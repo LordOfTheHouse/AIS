@@ -1,10 +1,11 @@
-package ru.vogu35.backend.services;
+package ru.vogu35.backend.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vogu35.backend.entities.StudentLesson;
 import ru.vogu35.backend.repositories.StudentLessonRepository;
+import ru.vogu35.backend.services.StudentLessonService;
 
 
 import java.util.List;

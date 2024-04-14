@@ -58,13 +58,14 @@ export const SchedulePage: React.FC = () => {
     ];
 
     const dispatch = useDispatch();
-    const schedule = useSelector((state: RootState) => state.schedule.schedule);
+    let schedule = useSelector((state: RootState) => state.schedule.schedule);
 
     useEffect(() => {
         scheduleService.getSchedule(isEvenWeek(), dispatch);
     }, []);
     const weekdays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
     const today = getToday();
+
     return (
         <div style={{
             display: 'flex',
