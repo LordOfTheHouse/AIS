@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.vogu35.backend.models.auth.LoginRequest;
 import ru.vogu35.backend.models.auth.RefreshToken;
 import ru.vogu35.backend.models.auth.SignupRequest;
-import ru.vogu35.backend.models.auth.UserResponse;
 import ru.vogu35.backend.proxies.AuthService;
-import ru.vogu35.backend.services.auth.JwtService;
 
 import java.util.Optional;
 

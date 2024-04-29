@@ -3,13 +3,17 @@ package ru.vogu35.backend.controllers;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.vogu35.backend.auth.JwtService;
 import ru.vogu35.backend.entities.StudentLesson;
 import ru.vogu35.backend.entities.SubjectGroup;
+import ru.vogu35.backend.exseptions.UserNotFoundException;
 import ru.vogu35.backend.models.LessonStudentMarksRq;
 import ru.vogu35.backend.models.StartLecture;
 import ru.vogu35.backend.models.auth.UserResponse;
+import ru.vogu35.backend.models.metrics.Metric;
 import ru.vogu35.backend.models.performance.StudentPerformanceModel;
 import ru.vogu35.backend.models.schedule.ScheduleTodayModel;
 import ru.vogu35.backend.proxies.AuthService;
@@ -17,6 +21,7 @@ import ru.vogu35.backend.services.LessonService;
 import ru.vogu35.backend.services.StudentLessonService;
 import ru.vogu35.backend.services.SubjectGroupService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,20 +35,24 @@ public class LectureController {
     private final SubjectGroupService subjectGroupService;
     private final LessonService lessonService;
     private final StudentLessonService studentLessonService;
-
+    private final JwtService jwtService;
 
     public LectureController(AuthService authService, SubjectGroupService subjectGroupService,
-                             LessonService lessonService, StudentLessonService studentLessonService) {
+                             LessonService lessonService, StudentLessonService studentLessonService, JwtService jwtService) {
         this.authService = authService;
         this.subjectGroupService = subjectGroupService;
         this.lessonService = lessonService;
         this.studentLessonService = studentLessonService;
+        this.jwtService = jwtService;
     }
 
     @PreAuthorize("hasAnyRole('client_student', 'client_teacher')")
     @GetMapping("/groups/today")
     public ResponseEntity<List<ScheduleTodayModel>> getGroups() {
-        return ResponseEntity.ok(subjectGroupService.findAllTodayByTeacher());
+        if( jwtService.getGroupIdClaim().equals("Teacher") ) {
+            return ResponseEntity.ok(subjectGroupService.findAllTodayByTeacher());
+        }
+        return ResponseEntity.ok(subjectGroupService.findAllTodayByGroupId());
     }
 
     @PreAuthorize("hasAnyRole('client_student', 'client_teacher')")
@@ -68,31 +77,40 @@ public class LectureController {
         return ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("hasRole('client_teacher')")
+    @PreAuthorize("hasAnyRole('client_student', 'client_teacher')")
     @PostMapping("/getStudentMark")
-    public ResponseEntity<?> getStudentMark(@RequestBody LessonStudentMarksRq studentLecture) {
-        log.info("getStudentMark: {}", studentLecture);
+    public ResponseEntity<List<StudentPerformanceModel>> fetchStudentMarks(@RequestBody LessonStudentMarksRq studentLecture) {
+        log.info("fetchStudentMarks: {}", studentLecture);
+
+        if (studentLecture.idLecture() == -1) {
+            return ResponseEntity.ok().build();
+        }
+
         List<UserResponse> users = authService.findUserByGroup(studentLecture.groupName());
+
         List<StudentPerformanceModel> studentsPerformance = users.stream()
-                .map( user -> studentLessonService.findByStudentIdAndLessonId(
-                                        user.getId(),
-                                        studentLecture.idLecture() ) )
-                .filter(Optional::isPresent)
-                .map(lesson -> {
-                    StudentLesson less = lesson.get();
-                    UserResponse user = users.stream()
-                            .filter(userRes -> userRes.getId().equals(less.getStudentId()))
-                            .findFirst()
-                            .get();
-                    String name = user.getLastName() + " " + user.getFirstName() + " " + user.getMiddleName();
-                    return new StudentPerformanceModel(less.getStudentId(), name, less.getMark(), less.getIsPresent());
-                })
+                .map(user -> studentLessonService.findByStudentIdAndLessonId(user.getId(), studentLecture.idLecture()))
+                .flatMap(Optional::stream)
+                .map(lesson -> createStudentPerformance(lesson, users))
                 .toList();
 
         if (studentsPerformance.isEmpty()) {
-            return ResponseEntity.badRequest().body("Студенты не найден");
+            studentsPerformance = users.stream()
+                    .map(user -> new StudentPerformanceModel(user.getId(), user.getFullName(), 0, false))
+                    .toList();
         }
-        return ResponseEntity.ok().body(studentsPerformance);
+
+        return ResponseEntity.ok(studentsPerformance);
+    }
+
+    private StudentPerformanceModel createStudentPerformance(StudentLesson lesson, List<UserResponse> users) {
+        UserResponse user = users.stream()
+                .filter(userRes -> userRes.getId().equals(lesson.getStudentId()))
+                .findFirst()
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        String name = user.getFullName();
+        return new StudentPerformanceModel(lesson.getStudentId(), name, lesson.getMark(), lesson.getIsPresent());
     }
 
     @PreAuthorize("hasRole('client_teacher')")

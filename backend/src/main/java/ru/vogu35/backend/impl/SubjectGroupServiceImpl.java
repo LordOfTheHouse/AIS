@@ -19,7 +19,7 @@ import ru.vogu35.backend.services.GroupService;
 import ru.vogu35.backend.services.LessonService;
 import ru.vogu35.backend.services.SubjectGroupService;
 import ru.vogu35.backend.services.SubjectService;
-import ru.vogu35.backend.services.auth.JwtService;
+import ru.vogu35.backend.auth.JwtService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -108,12 +108,6 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
     @Override
     public List<List<ScheduleModel>> findAllByTeacherId(boolean isEvenWeek) {
         return IntStream.rangeClosed(1, 6).mapToObj(weekday -> {
-                    // LocalDate currentDate = LocalDate.now();
-                    //
-                    // // Получаем текущую неделю
-                    //WeekFields weekFields = WeekFields.of(Locale.getDefault());
-                    //int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
-                    //boolean isEvenWeek = currentWeek % 2 == 0;
 
                     List<SubjectGroup> subjectGroups = subjectGroupRepository
                             .findAllByTeacherIdAndWeekdayAndWeekEven(jwtService.getSubClaim(), weekday, isEvenWeek);
@@ -161,6 +155,23 @@ public class SubjectGroupServiceImpl implements SubjectGroupService {
         int currentDay = currentDate.getDayOfWeek().getValue();
         List<SubjectGroup> subjectGroups = subjectGroupRepository
                 .findAllByTeacherIdAndWeekdayAndWeekEven(jwtService.getSubClaim(), currentDay, isEvenWeek);
+        return getScheduleTodayModels(subjectGroups);
+    }
+
+    public List<ScheduleTodayModel> findAllTodayByGroupId() {
+        LocalDate currentDate = LocalDate.now();
+
+        //        // Получаем текущую неделю
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        int currentWeek = currentDate.get(weekFields.weekOfWeekBasedYear());
+        boolean isEvenWeek = currentWeek % 2 == 0;
+        int currentDay = currentDate.getDayOfWeek().getValue();
+        List<SubjectGroup> subjectGroups = subjectGroupRepository
+                .findAllByGroup_NameAndWeekdayAndWeekEven(jwtService.getGroupIdClaim(), currentDay, isEvenWeek);
+        return getScheduleTodayModels(subjectGroups);
+    }
+
+    private List<ScheduleTodayModel> getScheduleTodayModels(List<SubjectGroup> subjectGroups) {
         return subjectGroups.stream().map(subjectGroup -> {
                     List<Lesson> lessons = lessonService.findAllByTodayAndSubjectGroupId(subjectGroup.getId());
                     if (lessons.isEmpty()) {
