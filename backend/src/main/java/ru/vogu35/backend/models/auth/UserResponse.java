@@ -31,6 +31,10 @@ public class UserResponse {
         groupName = userInfo.getAttributes().getGroupName().get(0);
     }
 
+    public String getFullName() {
+        return lastName + " " + firstName + " " + middleName;
+    }
+
 
     public static class UserResponseBuilder implements UserBuilder {
         private final UserResponse user;

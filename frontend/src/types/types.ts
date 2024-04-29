@@ -3,7 +3,7 @@ export interface IUserResponse {
     accessToken: string;
     id: string;
     username: string;
-    group: string;
+    groupName: string;
     firstName:string;
     middleName: string|null;
     lastName:string;

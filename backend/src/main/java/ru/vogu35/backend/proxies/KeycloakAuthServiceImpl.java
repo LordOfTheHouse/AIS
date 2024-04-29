@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.*;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -17,8 +16,8 @@ import ru.vogu35.backend.exseptions.LoginUserException;
 import ru.vogu35.backend.exseptions.UserNotFoundException;
 import ru.vogu35.backend.models.*;
 import ru.vogu35.backend.models.auth.*;
-import ru.vogu35.backend.services.auth.AdminTokenService;
-import ru.vogu35.backend.services.auth.JwtService;
+import ru.vogu35.backend.auth.AdminTokenService;
+import ru.vogu35.backend.auth.JwtService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
