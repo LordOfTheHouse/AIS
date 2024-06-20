@@ -35,12 +35,12 @@ const getToday = (): string => {
 export const SchedulePage: React.FC = () => {
     const columns = [
         {
-            title: 'Time',
+            title: 'Начало',
             dataIndex: 'start',
             key: 'start',
         },
         {
-            title: 'Subject',
+            title: 'Предмет, преподаватель',
             dataIndex: 'nameSubject',
             key: 'nameSubject',
             render: (text: string, record: ISchedule) => (
@@ -51,7 +51,7 @@ export const SchedulePage: React.FC = () => {
             ),
         },
         {
-            title: 'Classroom',
+            title: 'Аудитория',
             dataIndex: 'classroom',
             key: 'classroom',
         },

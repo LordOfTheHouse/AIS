@@ -47,7 +47,7 @@ export const HeaderMenu: FC = () => {
             zIndex: 1,
         }}
     >
-        <div>Аунтификация пользователя</div>
+        <div></div>
         <div>
             {isAuth ? (
                 <Dropdown

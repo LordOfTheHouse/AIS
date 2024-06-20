@@ -24,7 +24,7 @@ public class TestController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<?> getUserInfo(@PathVariable String id) throws JsonProcessingException {
+    public ResponseEntity<?> getUserInfo(@PathVariable String id) {
         authService.findByUserId(id);
         return ResponseEntity.ok().build();
     }
