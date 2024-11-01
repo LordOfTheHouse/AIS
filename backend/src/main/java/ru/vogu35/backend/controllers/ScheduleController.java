@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.vogu35.backend.models.schedule.ScheduleModel;
-import ru.vogu35.backend.services.auth.JwtService;
+import ru.vogu35.backend.auth.JwtService;
 import ru.vogu35.backend.services.SubjectGroupService;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 

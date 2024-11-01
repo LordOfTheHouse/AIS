@@ -4,6 +4,7 @@ import AuthPage from '../../pages/AuthPage';
 import { UserPage } from '../../pages/UserPage';
 import {SchedulePage} from "../../pages/SchedulePage";
 import LecturePage from "../../pages/LecturePage";
+import PerformancePage from "../../pages/PerformancePage";
 
 export const AppRoutes = () => {
     return (
@@ -12,6 +13,7 @@ export const AppRoutes = () => {
             <Route path="/info" element={<UserPage />} />
             <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/lesson" element={<LecturePage />} />
+            <Route path="/performance" element={<PerformancePage />} />
         </Routes>
     );
 };

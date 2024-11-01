@@ -1,4 +1,4 @@
-package ru.vogu35.backend.services.auth;
+package ru.vogu35.backend.auth;
 
 import org.springframework.security.oauth2.jwt.Jwt;
 
